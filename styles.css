@@ -1,0 +1,99 @@
+.box {
+    width: 12px;
+    height: 12px;
+    background-color: black;
+    position: relative;
+}
+
+.maze {
+    position: relative;
+}
+
+.small-font {
+    font-size: 9px;
+}
+
+.block1 {
+    width: 8px;
+    height: 255px;
+    border: 1px solid green;
+    position: absolute;
+    top: 30px;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.block2 {
+    height: 8px;
+    width: 655px;
+    position: absolute;
+    top: 30px;
+    left: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid green;
+}
+
+.block3 {
+    width: 8px;
+    height: 255px;
+    position: absolute;
+    left: 695px;
+    top: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid green;
+}
+
+.block4 {
+    height: 8px;
+    width: 100px;
+    position: absolute;
+    top: 75px;
+    left: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid green;   
+}
+
+.block5 {
+    height: 100px;
+    width: 8px;
+    position: absolute;
+    top: 30px;
+    left: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid green;
+}
+
+.block6 {
+    width: 8px;
+    height: 55px;
+    position: absolute;
+    left: 40px;
+    top: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid green;
+}
+
+.block7 {
+    width: 139px;
+    height: 8px;
+    position: absolute;
+    left: 40px;
+    top: 122px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid green;
+}
