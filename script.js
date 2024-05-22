@@ -1,6 +1,6 @@
 // Select the DOM elements for the box and the blocks
 const box = document.querySelector(".box");
-const block1 = document.querySelector(".block1");
+const block = document.querySelector(".block1");
 const walls = document.querySelectorAll(".wall");
 
 // Array to store the positions of the walls
@@ -10,15 +10,13 @@ const wallPositions = [];
 let counter = 0;
 
 // Loop through each wall element to get its position and store it in wallPositions array
-for (let i = 0; i < walls.length; i++) {
-    // Get the position of the wall
-    let wallPosition = walls[i].getBoundingClientRect();
+walls.forEach((wall) => {
+    let wallPosition = wall.getBoundingClientRect();
     let wallTop = wallPosition.top;
     let wallBottom = wallPosition.bottom;
     let wallLeft = wallPosition.left;
     let wallRight = wallPosition.right;
-    
-    // Constructor function to create a box object with top, bottom, left, and right properties
+
     function Box(top, bottom, left, right) {
         this.top = top;
         this.bottom = bottom;
@@ -26,10 +24,29 @@ for (let i = 0; i < walls.length; i++) {
         this.right = right;
     }
 
-    // Create a new box object with the wall's position and add it to the wallPositions array
     let box = new Box(wallTop, wallBottom, wallLeft, wallRight);
     wallPositions.push(box);
-}
+});
+
+//     // Get the position of the wall
+//     let wallPosition = walls[i].getBoundingClientRect();
+//     let wallTop = wallPosition.top;
+//     let wallBottom = wallPosition.bottom;
+//     let wallLeft = wallPosition.left;
+//     let wallRight = wallPosition.right;
+
+//     // Constructor function to create a box object with top, bottom, left, and right properties
+//     function Box(top, bottom, left, right) {
+//         this.top = top;
+//         this.bottom = bottom;
+//         this.left = left;
+//         this.right = right;
+//     }
+
+//     // Create a new box object with the wall's position and add it to the wallPositions array
+//     let box = new Box(wallTop, wallBottom, wallLeft, wallRight);
+//     wallPositions.push(box);
+// }
 
 // Placeholder function for finding the closest wall (implementation not provided)
 function findClosest() {
