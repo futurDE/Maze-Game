@@ -10,32 +10,13 @@ const wallPositions = [];
 let counter = 0;
 
 // Loop through each wall element to get its position and store it in wallPositions array
-walls.forEach((wall) => {
-    let wallPosition = wall.getBoundingClientRect();
-    let wallTop = wallPosition.top;
-    let wallBottom = wallPosition.bottom;
-    let wallLeft = wallPosition.left;
-    let wallRight = wallPosition.right;
-
-    function Box(top, bottom, left, right) {
-        this.top = top;
-        this.bottom = bottom;
-        this.left = left;
-        this.right = right;
-    }
-
-    let box = new Box(wallTop, wallBottom, wallLeft, wallRight);
-    wallPositions.push(box);
-});
-
-//     // Get the position of the wall
-//     let wallPosition = walls[i].getBoundingClientRect();
+// walls.forEach((wall) => {
+//     let wallPosition = wall.getBoundingClientRect();
 //     let wallTop = wallPosition.top;
 //     let wallBottom = wallPosition.bottom;
 //     let wallLeft = wallPosition.left;
 //     let wallRight = wallPosition.right;
 
-//     // Constructor function to create a box object with top, bottom, left, and right properties
 //     function Box(top, bottom, left, right) {
 //         this.top = top;
 //         this.bottom = bottom;
@@ -43,18 +24,40 @@ walls.forEach((wall) => {
 //         this.right = right;
 //     }
 
-//     // Create a new box object with the wall's position and add it to the wallPositions array
 //     let box = new Box(wallTop, wallBottom, wallLeft, wallRight);
 //     wallPositions.push(box);
-// }
+// });
+
+let topThing = [];
+let bottomThing = [];
+let leftThing = [];
+let rightThing = [];
+
+walls.forEach((wall) => {
+    let wallPosition = wall.getBoundingClientRect();
+    let wallTop = wallPosition.top;
+    let wallBottom = wallPosition.bottom;
+    let wallLeft = wallPosition.left;
+    let wallRight = wallPosition.right;
+
+    topThing.push(wallTop);
+    bottomThing.push(wallBottom);
+    leftThing.push(wallLeft);
+    rightThing.push(wallRight);
+});
+
+wallPositions.push(topThing);
+wallPositions.push(bottomThing);
+wallPositions.push(leftThing);
+wallPositions.push(rightThing);
+
+// Log the positions of all walls to the console
+console.log(wallPositions);
 
 // Placeholder function for finding the closest wall (implementation not provided)
 function findClosest() {
     
 }
-
-// Log the positions of all walls to the console
-console.log(wallPositions);
 
 // Initialize the position of the moving box
 let topPos = 0;
