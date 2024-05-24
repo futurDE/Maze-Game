@@ -57,9 +57,18 @@ console.log(wallPositions);
 // Placeholder function for finding the closest wall (implementation not provided)
 function findClosest() {
     let boxPosition = box.getBoundingClientRect();
-    let boxCenter = boxPosition.top - (boxPosition.height/2);
-    // console.log(`This is box center from top${boxCenter}`);
-    let offset = 0;
+    let boxCenterTop = boxPosition.top - (boxPosition.height/2);
+    let boxCenterBottom = boxPosition.bottom - (boxPosition.bottom/2);
+    let boxCenterLeft = boxPosition.left - (boxPosition.height/2);
+    let boxCenterRight = boxPosition.right - (boxPosition.height/2);
+    console.log(`This is box center from top${boxCenterTop}`);
+    console.log(`This is box center from bottom${boxCenterBottom}`);
+    console.log(`This is box center from left${boxCenterLeft}`);
+    console.log(`This is box center from right${boxCenterRight}`);
+    let offset1 = 0;
+    let offset2 = 0;
+    let offset3 = 0;
+    let offset4 = 0;
     let compareDifference = [];
     let closestObject = {};
 
@@ -93,9 +102,21 @@ function findClosest() {
 
     // console.log(wallObjPosition);
 
-    for (x in wallObjPosition) {
-        offset = wallObjPosition[x] - boxCenter;
-        compareDifference.push(offset);
+    for (w in wallObjPosition) { //compare with top
+        offset1 = wallObjPosition[w] - boxCenterTop;
+        compareDifference.push(offset1);
+    }
+    for (x in wallObjPosition) { //compare with bottom
+        offset2 = wallObjPosition[x] - boxCenterBottom;
+        compareDifference.push(offset2);
+    }
+    for (y in wallObjPosition) {
+        offset3 = wallObjPosition[y] - boxCenterBottom;
+        compareDifference.push(offset3);
+    }
+    for (z in wallObjPosition) {
+        offset4 = wallObjPosition[z] - boxCenterBottom;
+        compareDifference.push(offset4);
     }
 
     console.log(compareDifference);
@@ -107,11 +128,11 @@ function findClosest() {
     for (k = 0; k < compareDifference.length; k++) {
         if (compareDifference[k] < closest) {
             closest = compareDifference[k];
-            if (k + 1 <= 7) {
+            if (k + 1 <= 28) {
                 domR = "top";
-            } else if (k + 1 >= 8 && k + 1 <= 14) {
+            } else if (k + 1 >= 29 && k + 1 <= 56) {
                 domR = "bottom";
-            } else if (k + 1 >= 15 && k + 1 <= 21) {
+            } else if (k + 1 >= 57 && k + 1 <= 84) {
                 domR = "left";
             } else {
                 domR = "right";
