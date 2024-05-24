@@ -56,8 +56,74 @@ console.log(wallPositions);
 
 // Placeholder function for finding the closest wall (implementation not provided)
 function findClosest() {
-    
+    let boxPosition = box.getBoundingClientRect();
+    let boxCenter = boxPosition.top - (boxPosition.height/2);
+    // console.log(`This is box center from top${boxCenter}`);
+    let offset = 0;
+    let compareDifference = [];
+    let closestObject = {};
+
+    const wallObjPosition = {};
+    function funcTop(array) {
+        for (let i = 0; i < array.length; i++) {
+            const topKey = `top${i + 1}`;
+            wallObjPosition[topKey] = array[i];
+        }
+    }
+    function funcBottom(array) {
+        for (let i = 0; i < array.length; i++) {
+            const bottomKey = `bottom${i + 1}`;
+            wallObjPosition[bottomKey] = array[i];
+        }}
+    function funcLeft(array) {
+        for (let i = 0; i < array.length; i++) {
+            const leftKey = `left${i + 1}`;
+            wallObjPosition[leftKey] = array[i];
+        }}
+    function funcRight(array) {
+        for (let i = 0; i < array.length; i++) {
+            const rightKey = `right${i + 1}`;
+            wallObjPosition[rightKey] = array[i];
+        }}
+
+    funcTop(topThing);
+    funcBottom(bottomThing);
+    funcLeft(leftThing);
+    funcRight(rightThing);
+
+    // console.log(wallObjPosition);
+
+    for (x in wallObjPosition) {
+        offset = wallObjPosition[x] - boxCenter;
+        compareDifference.push(offset);
+    }
+
+    console.log(compareDifference);
+    // return compareDifference;
+
+    let closest = compareDifference[0];
+    let domR = "";
+
+    for (k = 0; k < compareDifference.length; k++) {
+        if (compareDifference[k] < closest) {
+            closest = compareDifference[k];
+            if (k + 1 <= 7) {
+                domR = "top";
+            } else if (k + 1 >= 8 && k + 1 <= 14) {
+                domR = "bottom";
+            } else if (k + 1 >= 15 && k + 1 <= 21) {
+                domR = "left";
+            } else {
+                domR = "right";
+            }
+            closestObject[domR] = closest;
+        }
+    }
+
+    return closestObject;
 }
+
+findClosest();
 
 // Initialize the position of the moving box
 let topPos = 0;
@@ -70,6 +136,7 @@ document.addEventListener("keydown", (event) => {
         box.style.top = `${topPos}px`; // Update the box's top style
         box.top = topPos; // Update the box's top property
         updateBoxPos(); // Call the function to update the box's position
+        console.log(findClosest());
     }
 });
 
@@ -80,6 +147,7 @@ document.addEventListener("keydown", (event) => {
         box.style.top = `${topPos}px`; // Update the box's top style
         box.top = topPos; // Update the box's top property
         updateBoxPos(); // Call the function to update the box's position
+        console.log(findClosest());
     }
 });
 
@@ -90,6 +158,7 @@ document.addEventListener("keydown", (event) => {
         box.style.left = `${leftPos}px`; // Update the box's left style
         box.left = leftPos; // Update the box's left property
         updateBoxPos(); // Call the function to update the box's position
+        console.log(findClosest());
     }
 });
 
@@ -100,6 +169,7 @@ document.addEventListener("keydown", (event) => {
         box.style.left = `${leftPos}px`; // Update the box's left style
         box.left = leftPos; // Update the box's left property
         updateBoxPos(); // Call the function to update the box's position
+        console.log(findClosest());
     }
 });
 
