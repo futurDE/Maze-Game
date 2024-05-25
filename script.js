@@ -3,36 +3,14 @@ const box = document.querySelector(".box");
 const block = document.querySelector(".block1");
 const walls = document.querySelectorAll(".wall");
 
-// Array to store the positions of the walls
+// Arrays to store the positions of the walls
 const wallPositions = [];
+let wallTopPositions = [];
+let wallBottomPositions = [];
+let wallLeftPositions = [];
+let wallRightPositions = [];
 
-// Initialize a counter variable
-let counter = 0;
-
-// Loop through each wall element to get its position and store it in wallPositions array
-// walls.forEach((wall) => {
-//     let wallPosition = wall.getBoundingClientRect();
-//     let wallTop = wallPosition.top;
-//     let wallBottom = wallPosition.bottom;
-//     let wallLeft = wallPosition.left;
-//     let wallRight = wallPosition.right;
-
-//     function Box(top, bottom, left, right) {
-//         this.top = top;
-//         this.bottom = bottom;
-//         this.left = left;
-//         this.right = right;
-//     }
-
-//     let box = new Box(wallTop, wallBottom, wallLeft, wallRight);
-//     wallPositions.push(box);
-// });
-
-let topThing = [];
-let bottomThing = [];
-let leftThing = [];
-let rightThing = [];
-
+// Get the position of each wall and store them in the respective arrays
 walls.forEach((wall) => {
     let wallPosition = wall.getBoundingClientRect();
     let wallTop = wallPosition.top;
@@ -40,31 +18,36 @@ walls.forEach((wall) => {
     let wallLeft = wallPosition.left;
     let wallRight = wallPosition.right;
 
-    topThing.push(wallTop);
-    bottomThing.push(wallBottom);
-    leftThing.push(wallLeft);
-    rightThing.push(wallRight);
+    wallTopPositions.push(wallTop);
+    wallBottomPositions.push(wallBottom);
+    wallLeftPositions.push(wallLeft);
+    wallRightPositions.push(wallRight);
 });
 
-wallPositions.push(topThing);
-wallPositions.push(bottomThing);
-wallPositions.push(leftThing);
-wallPositions.push(rightThing);
+// Push the arrays of wall positions into the wallPositions array
+wallPositions.push(wallTopPositions);
+wallPositions.push(wallBottomPositions);
+wallPositions.push(wallLeftPositions);
+wallPositions.push(wallRightPositions);
 
 // Log the positions of all walls to the console
 console.log(wallPositions);
 
 // Placeholder function for finding the closest wall (implementation not provided)
 function findClosest() {
+    // Get the current position of the box
     let boxPosition = box.getBoundingClientRect();
-    let boxCenterTop = boxPosition.top - (boxPosition.height/2);
-    let boxCenterBottom = boxPosition.bottom - (boxPosition.bottom/2);
-    let boxCenterLeft = boxPosition.left - (boxPosition.height/2);
-    let boxCenterRight = boxPosition.right - (boxPosition.height/2);
-    console.log(`This is box center from top${boxCenterTop}`);
-    console.log(`This is box center from bottom${boxCenterBottom}`);
-    console.log(`This is box center from left${boxCenterLeft}`);
-    console.log(`This is box center from right${boxCenterRight}`);
+    // Calculate the center positions of the box
+    let boxTop = boxPosition.top;
+    let boxBottom = boxPosition.bottom;
+    let boxLeft = boxPosition.left;
+    let boxRight = boxPosition.right;
+    // Log the center positions of the box
+    console.log(`This is box center from top${boxTop}`);
+    console.log(`This is box center from bottom${boxBottom}`);
+    console.log(`This is box center from left${boxLeft}`);
+    console.log(`This is box center from right${boxRight}`);
+    
     let offset1 = 0;
     let offset2 = 0;
     let offset3 = 0;
@@ -72,56 +55,66 @@ function findClosest() {
     let compareDifference = [];
     let closestObject = {};
 
+    // Object to store the wall positions
     const wallObjPosition = {};
+
+    // Functions to populate the wallObjPosition object with the respective wall positions
     function funcTop(array) {
         for (let i = 0; i < array.length; i++) {
             const topKey = `top${i + 1}`;
             wallObjPosition[topKey] = array[i];
         }
     }
+
     function funcBottom(array) {
         for (let i = 0; i < array.length; i++) {
             const bottomKey = `bottom${i + 1}`;
             wallObjPosition[bottomKey] = array[i];
-        }}
+        }
+    }
+
     function funcLeft(array) {
         for (let i = 0; i < array.length; i++) {
             const leftKey = `left${i + 1}`;
             wallObjPosition[leftKey] = array[i];
-        }}
+        }
+    }
+
     function funcRight(array) {
         for (let i = 0; i < array.length; i++) {
             const rightKey = `right${i + 1}`;
             wallObjPosition[rightKey] = array[i];
-        }}
+        }
+    }
 
-    funcTop(topThing);
-    funcBottom(bottomThing);
-    funcLeft(leftThing);
-    funcRight(rightThing);
+    // Populate the wallObjPosition object with the wall positions
+    funcTop(wallTopPositions);
+    funcBottom(wallBottomPositions);
+    funcLeft(wallLeftPositions);
+    funcRight(wallRightPositions);
 
-    // console.log(wallObjPosition);
-
+    // Calculate the differences between the wall positions and the box center positions
     for (w in wallObjPosition) { //compare with top
-        offset1 = wallObjPosition[w] - boxCenterTop;
+        offset1 = wallObjPosition[w] - boxTop;
         compareDifference.push(offset1);
     }
     for (x in wallObjPosition) { //compare with bottom
-        offset2 = wallObjPosition[x] - boxCenterBottom;
+        offset2 = wallObjPosition[x] - boxBottom;
         compareDifference.push(offset2);
     }
-    for (y in wallObjPosition) {
-        offset3 = wallObjPosition[y] - boxCenterBottom;
+    for (y in wallObjPosition) { //compare with bottom
+        offset3 = wallObjPosition[y] - boxBottom;
         compareDifference.push(offset3);
     }
-    for (z in wallObjPosition) {
-        offset4 = wallObjPosition[z] - boxCenterBottom;
+    for (z in wallObjPosition) { //compare with bottom
+        offset4 = wallObjPosition[z] - boxBottom;
         compareDifference.push(offset4);
     }
 
+    // Log the differences to the console
     console.log(compareDifference);
-    // return compareDifference;
 
+    // Find the closest wall by comparing the differences
     let closest = compareDifference[0];
     let domR = "";
 
@@ -144,6 +137,7 @@ function findClosest() {
     return closestObject;
 }
 
+// Call the findClosest function
 findClosest();
 
 // Initialize the position of the moving box
@@ -157,7 +151,7 @@ document.addEventListener("keydown", (event) => {
         box.style.top = `${topPos}px`; // Update the box's top style
         box.top = topPos; // Update the box's top property
         updateBoxPos(); // Call the function to update the box's position
-        console.log(findClosest());
+        console.log(findClosest()); // Log the closest wall to the console
     }
 });
 
@@ -168,7 +162,7 @@ document.addEventListener("keydown", (event) => {
         box.style.top = `${topPos}px`; // Update the box's top style
         box.top = topPos; // Update the box's top property
         updateBoxPos(); // Call the function to update the box's position
-        console.log(findClosest());
+        console.log(findClosest()); // Log the closest wall to the console
     }
 });
 
@@ -179,7 +173,7 @@ document.addEventListener("keydown", (event) => {
         box.style.left = `${leftPos}px`; // Update the box's left style
         box.left = leftPos; // Update the box's left property
         updateBoxPos(); // Call the function to update the box's position
-        console.log(findClosest());
+        console.log(findClosest()); // Log the closest wall to the console
     }
 });
 
@@ -190,7 +184,7 @@ document.addEventListener("keydown", (event) => {
         box.style.left = `${leftPos}px`; // Update the box's left style
         box.left = leftPos; // Update the box's left property
         updateBoxPos(); // Call the function to update the box's position
-        console.log(findClosest());
+        console.log(findClosest()); // Log the closest wall to the console
     }
 });
 
