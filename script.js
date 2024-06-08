@@ -1,292 +1,183 @@
-//Select .first-container from the DOM
-const firstContainer = document.querySelector(".first-container");
-let containerDOMRect = firstContainer.getBoundingClientRect(); //Get the DOMRect position of firstContainer
-let firstContainerPositionObject = { //Put the top, right, bottom, and left positions of firstContainer inside the firstContainerPositionObject object
-    top: containerDOMRect.top,
-    right: containerDOMRect.right,
-    bottom: containerDOMRect.bottom,
-    left: containerDOMRect.left,
-};
-
-console.log(`This is the firstContainer top position: ${firstContainerPositionObject.top}`);
-
-//Select .box from the DOM
+//Note: Work on barrier. Especially topBarrier.
+//Select DOM elements
+const outerSquare = document.querySelector(".outer-square");
 const box = document.querySelector(".box");
-let boxDOMRect = box.getBoundingClientRect(); //Get the DOMRect position of box
-let boxPositionObject = { //Put the top, right, bottom, and left positions of box inside the boxPositionObject object
-    top: boxDOMRect.top,
-    right: boxDOMRect.right,
-    bottom: boxDOMRect.bottom,
-    left: boxDOMRect.left,
-};
+const walls = document.querySelectorAll(".wall");
 
-//Get the box position values from boxPositionObject and assign them to the variables below
-let boxTopPosition = boxPositionObject.top;
-let boxRightPosition = boxPositionObject.right;
-let boxBottomPosition = boxPositionObject.bottom;
-let boxLeftPosition = boxPositionObject.left;
+//Global variables
+let boxTop; //top position of box. will be updated each time the box moves
+let boxRight; //right position of box. will be updated each time the box moves
+let boxBottom; //bottom position of box. will be updated each time the box moves
+let boxLeft; //left position of box. will be updated each time the box moves
 
-const initialDistanceOnAllSides = { //Calculate the distance between .first-container and .box on all sides and put them in the object initialDistanceOnAllSides
-    topSide: boxPositionObject["top"] - firstContainerPositionObject["top"],
-    rightSide: firstContainerPositionObject["right"] - boxPositionObject["right"],
-    bottomSide: firstContainerPositionObject["bottom"] - boxPositionObject["bottom"],
-    leftSide: boxPositionObject["left"] - firstContainerPositionObject["left"],
+//Get box DOMRect
+function getBoxDOMRect() {
+    let getBoxDOMRect = box.getBoundingClientRect();
+    boxTop = getBoxDOMRect.top;
+    boxRight = getBoxDOMRect.right;
+    boxBottom = getBoxDOMRect.bottom;
+    boxLeft = getBoxDOMRect.left;
+    console.log(`This is box top: ${getBoxDOMRect.top}, This is box right: ${getBoxDOMRect.right}, This is box bottom: ${getBoxDOMRect.bottom}, This is box left: ${getBoxDOMRect.left}`);
 }
+getBoxDOMRect();
 
-let messageNumber = 0; // Variable to store the index of the closest distance to the .box
-let message = ""; // Variable to store the arrow key direction corresponding to the closest distance
+//Global variables    --------> Add more comments here to make code more understandable
 
-let initialDistanceArray = []; //Array to store the initial distance on all sides of .box from .firstContainer
-let newDistanceArray = []; //Array to store the new distance on all sides of .box from .firstContainer
-let newDistanceOnAllSides = {}; //Calculate the new distance between .firstContainer and .box on all sides and put it in newDistanceOnAllSides
+let conditionArraysHorizontal = []; //Stores the wallDOMRects of the walls where box is within the horizontal distance of the wall
+let conditionArraysVertical = []; //Stores the wallDOMRects of the walls where box is within the vertical distance of the wall
+let topBarrier = NaN; //Set the top barrier when box is moving up
+let rightBarrier = NaN; //Set the right barrier when box is moving right
+let leftBarrier = NaN; //Set the left barrier when box is moving left
+let bottomBarrier = NaN; //Set the bottom barrier when box is moving down
 
-function checkEvent(msg, event) { // Function to check if the provided event matches the stored message
-    if (msg == event) { // If the message matches the event key
-        return true; // Return true
-    }
-}
+//All the wall DOMRects
+const wallDOMRects = {}; //Object to access all the wall DOMRects
 
-function updateDistance(arr1, obj) {
-    boxDOMRect = box.getBoundingClientRect(); //Get the new DOMRect for box
-    boxPositionObject = { //Put the top, right, left, bottom, and left positions in the boxPositionObject
-        top: boxDOMRect.top,
-        right: boxDOMRect.right,
-        bottom: boxDOMRect.bottom,
-        left: boxDOMRect.left,
-    }
+let key = "wallDOMRect"; //Used to dynamically add keys to wallDOMRects object
 
-    obj = {};
+walls.forEach((wall) => { //Dynamically add keys to wallDOMRects object
+    wallDOMRects[key + wall.innerHTML] = wall.getBoundingClientRect();
+});
 
-    obj = { //Calculate the new distance between .firstContainer and .box on all sides and put it in newDistanceOnAllSides
-        topSide: boxPositionObject["top"] - firstContainerPositionObject["top"],
-        rightSide: firstContainerPositionObject["right"] - boxPositionObject["right"],
-        bottomSide: firstContainerPositionObject["bottom"] - boxPositionObject["bottom"],
-        leftSide: boxPositionObject["left"] - firstContainerPositionObject["left"],
-    }
+//Function to check if box is within the horizontal distance of the walls
 
-    console.log(obj);
-
-    arr1 = [];
-
-    for (x in obj) {
-        arr1.push(obj[x]); //Push the values of the newDistanceOnAllSides object into the newDistanceArray array 
-    }
-
-    findClosestDistance(arr1);
-}
-
-function findClosestDistance(arr) { //Function to find the cloesest distance to .box
-    console.log(`This is newDistanceArray inside findClosestDistance: ${newDistanceArray}`);
-    let smallest = 5000;
-    for (let i = 0; i < arr.length; i++) {
-        if (arr[i] < smallest) {
-            messageNumber = i;
-            smallest = arr[i];
+function checkHorizontalDistanceCondition() {
+    conditionArraysHorizontal = [];
+    for (let x in wallDOMRects) {
+        if (boxLeft >= wallDOMRects[x].left && boxRight <= wallDOMRects[x].right) {
+            conditionArraysHorizontal.push(x);
         }
     }
-    console.log(`This is the smallest: ${smallest}`);
-    console.log(`This is the message: ${messageNumber}`);
-    switch (messageNumber) {
-        case 0:
-            message = "ArrowUp";
-            break;
-        case 1:
-            message = "ArrowRight";
-            break;
-        case 2:
-            message = "ArrowDown";
-            break;
-        case 3:
-            message = "ArrowLeft";
-            break;
+
+ //Make sure to revise the code to clean code
+
+    let distanceFromWallsAboveBox = []; //Array to store the distances between box.top and wall.bottom
+    let distanceFromWallsBelowBox = [];
+    let positiveDistancesFromWallsAboveBox = []; //Only positive distances from distanceFromWallsAboveBox
+    let positiveDistancesFromWallsBelowBox = [];
+    for (let i = 0; i < conditionArraysHorizontal.length; i++) {
+        distanceFromWallsAboveBox.push(boxTop - wallDOMRects[`${conditionArraysHorizontal[i]}`].bottom);
+        distanceFromWallsBelowBox.push(wallDOMRects[`${conditionArraysHorizontal[i]}`].top - boxBottom);
     }
 
-    console.log(message);
+    for (let k = 0; k < distanceFromWallsAboveBox.length; k++) {
+        if (distanceFromWallsAboveBox[k] >= 0) {
+            positiveDistancesFromWallsAboveBox.push(distanceFromWallsAboveBox[k]);
+        }
+        if (distanceFromWallsBelowBox[k] >= 0) {
+            positiveDistancesFromWallsBelowBox.push(distanceFromWallsBelowBox[k]);
+        }
+    }
+
+    let minDistance = Math.min(...positiveDistancesFromWallsAboveBox);
+    let minDistanceFromWallsBelowBox = Math.min(...positiveDistancesFromWallsBelowBox);
+    for (let y in wallDOMRects) {
+        if (boxTop - wallDOMRects[y].bottom == minDistance) {
+            topBarrier = wallDOMRects[y].bottom;
+        }
+    }
+    for (let c in wallDOMRects) {
+        if (minDistanceFromWallsBelowBox == wallDOMRects[c].top - boxBottom) {
+            bottomBarrier = wallDOMRects[c].top;
+        }
+    }
 }
 
+function checkVerticalDistanceCondition() {
+    conditionArraysVertical = [];
+    for (let x in wallDOMRects) {
+        if (boxTop >= wallDOMRects[x].top && boxBottom <= wallDOMRects[x].bottom) {
+            conditionArraysVertical.push(x);
+        }
+    }
+
+    let distanceFromWallsLeftOfBox = [];
+    let distanceFromWallsRightOfBox = [];
+    let positiveDistanceFromWallsLeftOfBox = [];
+    let positiveDistancesFromWallsRightOfBox = [];
+    for (let i = 0; i < conditionArraysVertical.length; i++) {
+        distanceFromWallsLeftOfBox.push(boxLeft - wallDOMRects[`${conditionArraysVertical[i]}`].right);
+        distanceFromWallsRightOfBox.push(wallDOMRects[`${conditionArraysVertical[i]}`].left - boxRight);
+    }
+
+    for (let k = 0; k < distanceFromWallsLeftOfBox.length; k++) {
+        if (distanceFromWallsLeftOfBox[k] >= 0) {
+            positiveDistanceFromWallsLeftOfBox.push(distanceFromWallsLeftOfBox[k]);
+        }
+        if (distanceFromWallsRightOfBox[k] >= 0) {
+            positiveDistancesFromWallsRightOfBox.push(distanceFromWallsRightOfBox[k]);
+        }
+    }
+
+    let minDistanceFromWallsLeftOfBox = Math.min(...positiveDistanceFromWallsLeftOfBox);
+    let minDistanceFromWallsRightOfBox = Math.min(...positiveDistancesFromWallsRightOfBox);
+    for (let y in wallDOMRects) {
+        if (minDistanceFromWallsLeftOfBox == boxLeft - wallDOMRects[y].right) {
+            leftBarrier = wallDOMRects[y].right;
+        }
+    }
+    for (let c in wallDOMRects) {
+        if (wallDOMRects[c].left - boxRight == minDistanceFromWallsRightOfBox) {
+            rightBarrier = wallDOMRects[c].left;
+        }
+    }
+}
+
+// Depending on the arrow key pressed, update the box's position:
+// After each move, update the box's DOMRect and global position variables
 document.addEventListener("keydown", (event) => {
+    switch (event.key) {
+        case "ArrowUp":
+            checkHorizontalDistanceCondition();
+            moveBox();
+            break;
+        case "ArrowRight":
+            checkVerticalDistanceCondition();
+            moveBox();
+            break;
+        case "ArrowDown":
+            checkHorizontalDistanceCondition();
+            moveBox();
+            break;
+        case "ArrowLeft":
+            checkVerticalDistanceCondition();
+            moveBox();
+            break;
+        default:
+    }
+});
+
+//Move box
+function moveBox() {
     if (event.key == "ArrowUp") {
-        if (checkEvent(message, event.key)) {
-            if (boxTopPosition > firstContainerPositionObject.top) {
-                boxTopPosition -= 2; //Subtract 2 from the box top position to move it upward
-                box.style.top = `${boxTopPosition}px`
-            }
-            box.top = boxTopPosition; //Set the new top position
-
-            updateDistance(newDistanceArray, newDistanceOnAllSides);
-            console.log(compareBoxAndWall(boxPositionObject.bottom, wallPos.top));
-        } else {
-            boxTopPosition -= 2; //Subtract 2 from the box top position to move it upward
-            box.style.top = `${boxTopPosition}px`
-            box.top = boxTopPosition; //Set the new top position
-
-            updateDistance(newDistanceArray, newDistanceOnAllSides);
-            console.log(compareBoxAndWall(boxPositionObject.bottom, wallPos.top));
+        if (boxTop > topBarrier) {
+            console.log(`This is box top: ${boxTop}`);
+            console.log(`Top barrier inside moveBox(): ${topBarrier}`);
+            boxTop -= 1;
+            box.style.top = `${boxTop}px`;
         }
-    }
-});
-
-
-
-document.addEventListener("keydown", (event) => {
-    if (event.key == "ArrowRight") {
-        if (compareBoxAndWall(boxPositionObject.bottom, wallDOMRect.top, wallDOMRect.bottom)) {
-            wallLeftBarrier();
-        } else if (checkEvent(message, event.key)) {
-            if (boxRightPosition < firstContainerPositionObject.right) {
-                boxLeftPosition += 2; //Subtract 2 from the box top position to move it upward
-                box.style.left = `${boxLeftPosition}px`
-            }
-            box.left = boxLeftPosition;
-            boxRightPosition = boxPositionObject.right;
-
-            updateDistance(newDistanceArray, newDistanceOnAllSides);
-        } else {
-            boxLeftPosition += 2; //Subtract 2 from the box top position to move it upward
-            box.style.left = `${boxLeftPosition}px`
-            box.left = boxLeftPosition; //Set the new top position
-
-            updateDistance(newDistanceArray, newDistanceOnAllSides);
+        box.top = boxTop;
+        getBoxDOMRect();
+    } else if (event.key == "ArrowRight") {
+        if (boxRight < rightBarrier) {
+            boxLeft += 1;
+            box.style.left = `${boxLeft}px`;
         }
-    }
-});
-
-
-
-document.addEventListener("keydown", (event) => {
-    if (event.key == "ArrowDown") {
-        if (compareBoxAndWallHorizontalLength(boxPositionObject.top, boxPositionObject.right, wallDOMRect.top, wallDOMRect.left)) {
-            wallTopBarrier();
-        } else if (checkEvent(message, event.key)) {
-            if (boxBottomPosition < firstContainerPositionObject.bottom) {
-                boxTopPosition += 2; //Subtract 2 from the box top position to move it upward
-                box.style.top = `${boxTopPosition}px`
-            }
-            box.top = boxTopPosition; //Set the new top position
-            boxBottomPosition = boxPositionObject.bottom;
-
-            updateDistance(newDistanceArray, newDistanceOnAllSides);
-            console.log(compareBoxAndWall(boxPositionObject.bottom, wallPos.top));
-        } else {
-            boxTopPosition += 2; //Subtract 2 from the box top position to move it upward
-            box.style.top = `${boxTopPosition}px`
-            box.top = boxTopPosition; //Set the new top position
-
-            updateDistance(newDistanceArray, newDistanceOnAllSides);
-            console.log(compareBoxAndWall(boxPositionObject.bottom, wallPos.top));
+        box.left = boxLeft;
+        getBoxDOMRect();
+    } else if (event.key == "ArrowDown") {
+        if (boxBottom < bottomBarrier) {
+            boxTop += 1;
+            box.style.top = `${boxTop}px`;
         }
-    }
-});
-
-document.addEventListener("keydown", (event) => {
-    if (event.key == "ArrowLeft") {
-        if (compareBoxAndWall2(boxPositionObject.bottom, wallDOMRect.top, wallDOMRect.bottom)) {
-            wallRightBarrier();
-        } else if (checkEvent(message, event.key)) {
-            if (boxLeftPosition > firstContainerPositionObject.left) {
-                boxLeftPosition -= 2; //Subtract 2 from the box top position to move it upward
-                box.style.left = `${boxLeftPosition}px`
-            }
-            box.top = boxLeftPosition; //Set the new top position
-
-            updateDistance(newDistanceArray, newDistanceOnAllSides);
-        } else {
-            boxLeftPosition -= 2; //Subtract 2 from the box top position to move it upward
-            box.style.left = `${boxLeftPosition}px`
-            box.left = boxLeftPosition; //Set the new top position
-
-            updateDistance(newDistanceArray, newDistanceOnAllSides);
+        box.top = boxTop;
+        getBoxDOMRect();
+    } else {
+        if (boxLeft > leftBarrier) {
+            boxLeft -= 1;
+            box.style.left = `${boxLeft}px`;
         }
+        box.left = boxLeft;
+        getBoxDOMRect();
     }
-});
-
-//**************************************************************************************************************************************************** */
-
-//Select .wall from the DOM
-const wall = document.querySelector(".wall");
-const wallDOMRect = wall.getBoundingClientRect(); //get the DOMRect positions of .wall
-const wallPos = { //put the DOMRect positions of .wall into the wallPos object.
-    top: wallDOMRect.top,
-    right: wallDOMRect.right,
-    bottom: wallDOMRect.bottom,
-    left: wallDOMRect.left,
-};
-
-//Function to check the position of .box relative to .wall
-function compareBoxAndWall(boxBottom, wallTop, wallBottom) {
-    if (boxBottom > wallTop && boxBottom < wallBottom) { //condition to check if .box is within the vertical distance of .wall
-        if (compareBoxLeftAndWallLeft(boxPositionObject.left, wallPos.left)) {
-            return true;
-        }
-    }
-}
-
-function compareBoxAndWall2(boxBottom, wallTop, wallBottom) {
-    if (boxBottom > wallTop && boxBottom < wallBottom) {
-        if (compareBoxRightAndWallLeft(boxPositionObject.right, wallPos.left)) {
-            return true;
-        }
-    }
-}
-
-//Function to check if box.left is less than wall.left
-function compareBoxLeftAndWallLeft(boxLeft, wallLeft) {
-    if (boxLeft < wallLeft) {
-        return true;
-    }
-}
-
-function compareBoxRightAndWallLeft(boxRight, wallLeft) {
-    if (boxRight > wallLeft) {
-        return true;
-    }
-}
-
-//Function to ensure .box doesn't cross wall.left
-function wallLeftBarrier() {
-    if (boxRightPosition < wallPos.left) {
-        boxLeftPosition += 2;
-        box.style.left = `${boxLeftPosition}px`;
-    }
-    box.left = boxLeftPosition;
-    boxLeftPosition = boxPositionObject.left;
-    boxRightPosition = boxPositionObject.right;
-    console.log(`This is boxRightPosition: ${boxRightPosition}`);
-    console.log(`This is wallPos.left position: ${wallPos.left}`);
-
-    updateDistance(newDistanceArray, newDistanceOnAllSides);
-}
-
-function wallRightBarrier() {
-    if (boxLeftPosition > wallPos.right) {
-        boxLeftPosition -= 2;
-        box.style.left = `${boxLeftPosition}px`;
-    }
-    box.left = boxLeftPosition;
-    boxLeftPosition = boxPositionObject.left;
-    boxRightPosition = boxPositionObject.right;
-    boxTopPosition = boxPositionObject.top;
-    boxBottomPosition = boxPositionObject.bottom;
-
-    updateDistance(newDistanceArray, newDistanceOnAllSides);
-}
-
-
-//Function to check .box is within .wall horizontal length
-function compareBoxAndWallHorizontalLength(boxBottom, boxRight, wallTop, wallLeft) {
-    if (boxRight > wallLeft && boxBottom < wallTop) {
-        return true;
-    }
-}
-
-function wallTopBarrier() {
-    if (boxBottomPosition < wallPos.top) {
-        boxTopPosition += 2;
-        box.style.top = `${boxTopPosition}px`;
-    }
-    box.top = boxTopPosition;
-    boxTopPosition = boxPositionObject.top;
-    boxBottomPosition = boxPositionObject.bottom;
-
-    updateDistance(newDistanceArray, newDistanceOnAllSides);
 }
